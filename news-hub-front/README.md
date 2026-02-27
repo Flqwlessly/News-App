@@ -1,73 +1,136 @@
-# Welcome to your Lovable project
+# NewsHub — Frontend
 
-## Project info
+An AI-powered news aggregator frontend. NewsHub fetches and displays processed news articles with AI-generated summaries, and lets users chat with an AI assistant about any article — all in a clean, modern interface.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+![React](https://img.shields.io/badge/React-18-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-5-purple?logo=vite) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-teal?logo=tailwindcss)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **News Feed** — Responsive grid of news cards with cover images, categories, publisher info, and relative timestamps
+- **Article Detail** — Full article view with an AI-generated detailed summary and a "Why It Matters" section
+- **AI Chatbot** — Floating chat assistant on every article page, context-aware and powered by the backend LLM
+- **Live Data** — All content is fetched from a backend API; no hardcoded data in the frontend
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+| Tool | Purpose |
+|---|---|
+| React 18 + TypeScript | UI framework |
+| Vite | Dev server & bundler |
+| Tailwind CSS | Styling |
+| shadcn/ui | Component library |
+| React Router v6 | Client-side routing |
+| TanStack React Query | Data fetching & caching |
+| date-fns | Date formatting |
+| lucide-react | Icons |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Getting Started
 
-Follow these steps:
+### Prerequisites
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Node.js 18+ and npm
+- A running instance of the [NewsHub backend](https://github.com/majortom-39/news-hub-front) on `http://localhost:8000`
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+# Clone the repo
+git clone https://github.com/majortom-39/news-hub-front.git
+cd news-hub-front
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Install dependencies
+npm install
+
+# Start the dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at **http://localhost:8080**.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## Backend Dependency
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This frontend is a pure UI shell — it requires a backend API running at `http://localhost:8000`. Without it, the app will display a "Failed to load articles" message.
 
-## What technologies are used for this project?
+### Required API Endpoints
 
-This project is built with:
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/articles` | Returns all processed articles |
+| `GET` | `/api/articles/:id` | Returns a single article by ID |
+| `POST` | `/api/chat` | Sends a chat message, returns an AI reply |
+| `POST` | `/api/sync` | Triggers article scraping & AI processing |
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Article Schema
 
-## How can I deploy this project?
+```ts
+{
+  id: string
+  title: string
+  quickSummary: string
+  detailedSummary?: string
+  whyItMatters?: string
+  authorName: string
+  publisherName: string
+  publisherLogo: string   // image URL
+  coverImage: string      // image URL
+  datePosted: string      // ISO 8601
+  category: string
+  sourceUrl: string
+  originalContent?: string
+}
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Chat Request Body
 
-## Can I connect a custom domain to my Lovable project?
+```json
+{
+  "articleId": "abc123",
+  "articleTitle": "...",
+  "articleSummary": "...",
+  "articleContent": "...",
+  "history": [
+    { "text": "What is this about?", "isUser": true },
+    { "text": "It's about...", "isUser": false }
+  ],
+  "message": "Can you summarize the key points?"
+}
+```
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+src/
+├── components/
+│   ├── ChatBot.tsx        # Floating AI chat widget
+│   ├── NewsCard.tsx       # Article card for the home grid
+│   └── ui/                # shadcn/ui component library
+├── data/
+│   └── articles.ts        # API functions & Article type definition
+├── pages/
+│   ├── Index.tsx          # Home feed page
+│   ├── ArticlePage.tsx    # Single article detail page
+│   └── NotFound.tsx       # 404 page
+├── App.tsx                # Routing & global providers
+└── main.tsx               # Entry point
+```
+
+---
+
+## Scripts
+
+```bash
+npm run dev       # Start development server
+npm run build     # Production build
+npm run preview   # Preview production build locally
+npm run lint      # Run ESLint
+```
